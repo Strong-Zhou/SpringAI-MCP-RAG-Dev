@@ -30,4 +30,10 @@ public class SSEController {
         SSEServer.sendMsg(userId, msg, SSEMsgType.MESSAGE);
     }
 
+    @GetMapping("/sendMsgAll")
+    public void sendMsgAll(@RequestParam  String msg) {
+        SSEServer.sendMsgAll(msg);
+    }
+
+
 }

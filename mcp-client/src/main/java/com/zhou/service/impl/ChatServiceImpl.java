@@ -1,12 +1,18 @@
 package com.zhou.service.impl;
 
+import com.zhou.entity.MsgEntity;
+import com.zhou.enums.SSEMsgType;
 import com.zhou.service.ChatService;
-import jakarta.servlet.http.HttpServletResponse;
+import com.zhou.utils.SSEServer;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
+import java.util.stream.Collectors;
+
 @Service
+@Slf4j
 public class ChatServiceImpl implements ChatService {
 
     private ChatClient client;
@@ -32,5 +38,23 @@ public class ChatServiceImpl implements ChatService {
             throw new RuntimeException(e);
         }
         return client.prompt(propmt).stream().content();
+    }
+
+
+    @Override
+    public void doChat(MsgEntity msgEntity) {
+        String userId = msgEntity.getCurrentUserName();
+        String prompt = msgEntity.getMessage();
+        String botMsgId = msgEntity.getBotMsgId();
+
+        Flux<String> stringFlux = client.prompt(prompt).stream().content();
+
+
+        stringFlux.toStream().map(chatResponse->{
+            String content = chatResponse.toString();
+            SSEServer.sendMsg(userId, content, SSEMsgType.ADD);
+            log.info("用户: {}, 响应: {}", userId, content);
+            return content;
+        }).collect(Collectors.toList());
     }
 }

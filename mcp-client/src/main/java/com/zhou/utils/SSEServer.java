@@ -77,26 +77,32 @@ public class SSEServer {
     }
 
     /**
-     * 发送消息给指定用户
+     * 发送消息给所有用户
+     * @param message 要发送的消息内容
+     */
+    public static void sendMsgAll(String message) {
+        log.info("准备发送消息，用户ID: {}, 批量发送消息: {}", message);
+        for (String key : emitters.keySet()){
+            sendMsg(key, message, SSEMsgType.MESSAGE);
+        }
+    }
+
+    /**
+     * 批量发送消息给单个
      * @param userId 用户ID
      * @param message 要发送的消息内容
-     * @param msgType 消息类型
      */
-    public static void sendMsgAll(String userId, String message, SSEMsgType msgType) {
-        log.info("准备发送消息，用户ID: {}, 消息: {}, 类型: {}", userId, message, msgType.type);
-
-        if(!emitters.containsKey(userId)) {
-            log.warn("用户不存在或未连接，用户ID: {}", userId);
-            return;
+    //http://localhost:8090/sse/sendMsgFlux?userId=n1xvc632d&msg=hello
+    public static void sendMsgFlux(String userId, String message) {
+        log.info("准备发送消息，用户ID: {}, 消息: {}, 类型: {}", userId, message);
+        for (int i = 0; i < 100; i++) {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            sendMsg(userId, message, SSEMsgType.ADD);
         }
-
-        SseEmitter sseEmitter = emitters.get(userId);
-        if (sseEmitter == null) {
-            log.warn("SseEmitter为空，用户ID: {}", userId);
-            return;
-        }
-
-        sendEmitterMsg(sseEmitter, userId, message, msgType);
     }
 
     /**
