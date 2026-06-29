@@ -26,6 +26,11 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public Flux<String> chatFlux(String propmt) {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return client.prompt(propmt).stream().content();
     }
 }

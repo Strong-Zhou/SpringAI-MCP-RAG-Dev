@@ -1,5 +1,6 @@
 package com.zhou.aspect;
 
+import cn.hutool.core.date.StopWatch;
 import groovyjarjarpicocli.CommandLine;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -14,15 +15,20 @@ public class LogAspect {
 
     @Around("execution(* com.zhou.service.*.*(..))")
     public Object log(ProceedingJoinPoint joinPoint) throws Throwable {
-        long start = System.currentTimeMillis();
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start("任务1");
 
         Object proceed = joinPoint.proceed();
         String name = joinPoint.getTarget().getClass().getName();
         String methodName = joinPoint.getSignature().getName();
 
-        long end = System.currentTimeMillis();
-        if(end-start>2000){
-            log.error("{} {} cost {} ms", name, methodName, end - start);
+        stopWatch.stop();
+        long totalTimeMillis = stopWatch.getTotalTimeMillis();
+
+        System.out.println(stopWatch.shortSummary());
+        System.out.println(stopWatch.prettyPrint());
+        if(totalTimeMillis>2000){
+            log.error("{} {} cost {} ms", name, methodName, totalTimeMillis);
         }
         
         return proceed;

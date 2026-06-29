@@ -2,15 +2,11 @@ spring:
   application:
     name: spring-ai-mcp-client
   profiles:
-    active: test
+    active: dev
   ai:
     openai:
-      api-key: sk-xxx                   # 官方 deepseek
-      base-url: https://api.deepseek.com
+      api-key: ${OPENAI_API_KEY}
+      base-url: ${OPENAI_BASE_URL}
       chat:
         options:
-          model: deepseek-chat
-
-logging:
-  level:
-    root: info
+          model: ${OPENAI_CHAT_OPTIONS_MODEL}

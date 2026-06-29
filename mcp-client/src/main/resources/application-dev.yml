@@ -1,0 +1,5 @@
+server:
+  port: 8090
+
+website:
+  domain: http://192.168.0.10:5501

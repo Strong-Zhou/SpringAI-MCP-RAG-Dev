@@ -7,4 +7,6 @@ public interface ChatService {
     String chat(String propmt);
 
     Flux<String> chatFlux(String propmt);
+
+
 }
