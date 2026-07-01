@@ -96,11 +96,6 @@ public class SSEServer {
     public static void sendMsgFlux(String userId, String message) {
         log.info("准备发送消息，用户ID: {}, 消息: {}, 类型: {}", userId, message);
         for (int i = 0; i < 100; i++) {
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
             sendMsg(userId, message, SSEMsgType.ADD);
         }
     }
